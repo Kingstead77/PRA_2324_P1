@@ -6,44 +6,148 @@
 template <typename T>
 class ListLinked : public List<T> {
     private:
-        Node<T>* first; // Puntero al primer nodo de la lista enlazada
-        int n;          // Número de elementos en la lista
-
+        Node<T>* first; 
+        int n;          
+	int max;
+	static const int MINISIZE = 2;
     public:
-        // Constructor sin argumentos
-        ListLinked() : first(nullptr), n(0) {}
+        
+	ListLinked() : first(nullptr), n(0) {}
 
-        // Destructor
+        
         ~ListLinked() {
-            // Liberar la memoria de los nodos
+            
             while (first != nullptr) {
-                Node<T>* aux = first->next; // Guardar el siguiente nodo
-                delete first;               // Liberar el nodo actual
-                first = aux;                // Avanzar al siguiente nodo
+                Node<T>* aux = first->next; 
+                delete first;               
+                first = aux;                
             }
         }
 
-        // Sobrecarga del operador []
+
         T operator[](int pos) {
             if (pos < 0 || pos >= n) {
                 throw std::out_of_range("Índice fuera de rango");
             }
 
-            Node<T>* current = first; // Comenzar en el primer nodo
+            Node<T>* current = first; 
             for (int i = 0; i < pos; ++i) {
-                current = current->next; // Avanzar al nodo en la posición deseada
-            }
-            return current->data; // Devolver el elemento en la posición pos
+                current = current->next; 
+	    }
+            return current->data; 
         }
 
-        // Sobrecarga del operador <<
+        
         friend std::ostream& operator<<(std::ostream &out, const ListLinked<T> &list) {
             Node<T>* current = list.first;
             while (current != nullptr) {
-                out << current->data << " "; // Imprimir el data de cada nodo
-                current = current->next;     // Avanzar al siguiente nodo
+                out << current->data << " "; 
+                current = current->next;     
             }
             return out;
         }
+
+	void insert(int pos, T e) override {
+		if (pos < 0 || pos > n) {  // Posición fuera de rango
+        		throw std::out_of_range("Posición fuera de rango");
+    		}
+
+    		Node<T>* newNode = new Node<T>{e, nullptr};  // Crear nuevo nodo
+
+    		if (pos == 0) {  
+        		newNode->next = first;  
+        		first = newNode;        
+    		} else {
+        		Node<T>* current = first;
+
+        
+        		for (int i = 0; i < pos - 1; ++i) {
+            		current = current->next;
+        		}
+
+        		newNode->next = current->next;
+        		current->next = newNode;
+    		}
+
+    		++n; 
+	}
+
+
+        void append(T e) override {
+            insert(n, e); 
+        }
+
+        void prepend(T e) override {
+            insert(0, e); 
+        }
+	
+	T remove(int pos) override {
+	    if (pos < 0 || pos >= n) {  
+        	throw std::out_of_range("Posición fuera de rango");
+ 	   	}
+
+	    Node<T>* toDelete = nullptr;
+	    T removed_element;
+
+	    if (pos == 0) {  
+	        toDelete = first;        
+	        removed_element = first->data;  
+	        first = first->next;     
+	    } else {
+	        Node<T>* current = first;
+
+	        for (int i = 0; i < pos - 1; ++i) {
+	            current = current->next;
+        	}
+
+	        toDelete = current->next;
+        	removed_element = toDelete->data;
+
+                current->next = toDelete->next;
+	    }
+
+	    delete toDelete;  
+	    --n;              
+
+	    return removed_element;  
+	}
+
+	T get(int pos) override {
+	    if (pos < 0 || pos >= n) {  
+	        throw std::out_of_range("Posición fuera de rango");
+	    }
+
+	    Node<T>* current = first;
+
+    
+	    for (int i = 0; i < pos; ++i) {
+	        current = current->next;
+	    }
+
+	    return current->data;  
+	}
+
+	int search(T e) override {
+	    Node<T>* current = first;  
+	    int pos = 0;               
+    
+	    while (current != nullptr) {
+	        if (current->data == e) {  
+	            return pos;  
+	        }
+	        current = current->next;  
+	        ++pos;  
+	    }
+	    return -1;  
+	}
+
+        
+        bool empty() const override {
+            return n == 0;
+        }
+
+        int size() const override {
+            return n; 
+	}
 };
 
