@@ -12,13 +12,16 @@ class ListLinked : public List<T> {
 	static const int MINISIZE = 2;
     public:
         
-	ListLinked() : first(nullptr), n(0) {}
+		ListLinked(){
+			first = nullptr;
+			n = 0;
+		} 
 
         
         ~ListLinked() {
-            
+            Node<T>* aux;
             while (first != nullptr) {
-                Node<T>* aux = first->next; 
+                aux = first->next; 
                 delete first;               
                 first = aux;                
             }
@@ -47,30 +50,30 @@ class ListLinked : public List<T> {
             return out;
         }
 
-	void insert(int pos, T e) override {
-		if (pos < 0 || pos > n) {  // Posición fuera de rango
-        		throw std::out_of_range("Posición fuera de rango");
-    		}
+		void insert(int pos, T e) override {
+			if (pos < 0 || pos > n) {  
+					throw std::out_of_range("Posición fuera de rango");
+				}
 
-    		Node<T>* newNode = new Node<T>{e, nullptr};  // Crear nuevo nodo
+				Node<T>* newNode = new Node<T>{e, nullptr};  
 
-    		if (pos == 0) {  
-        		newNode->next = first;  
-        		first = newNode;        
-    		} else {
-        		Node<T>* current = first;
+				if (pos == 0) {  
+					newNode->next = first;  
+					first = newNode;        
+				} else {
+					Node<T>* current = first;
 
-        
-        		for (int i = 0; i < pos - 1; ++i) {
-            		current = current->next;
-        		}
+			
+					for (int i = 0; i < pos - 1; ++i) {
+						current = current->next;
+					}
 
-        		newNode->next = current->next;
-        		current->next = newNode;
-    		}
+					newNode->next = current->next;
+					current->next = newNode;
+				}
 
-    		++n; 
-	}
+				++n; 
+		}
 
 
         void append(T e) override {
@@ -142,12 +145,12 @@ class ListLinked : public List<T> {
 	}
 
         
-        bool empty() const override {
-            return n == 0;
-        }
+    bool empty() const override {
+        return n == 0;
+    }
 
-        int size() const override {
-            return n; 
+    int size() const override {
+        return n; 
 	}
 };
 
